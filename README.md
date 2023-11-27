@@ -19,21 +19,36 @@ ensuring simplicity in usage. Under the permissive BSD-2-Clause license, users c
 
 ## Usage
 
+Integration into the user app:
 ```
-   +-----------------+
-   |   .cfg File     |
-   +-----------------+
+   +-----------------+                                                        +------------------------+
+   |   .cfg file     |                                                        | User app .c, .h files  |
+   +-----------------+                                                        +------------------------+
+            |                                                                           |                                                                                
+            V                                                                           V                                                                                                                                                           
+   +-----------------+                                                          +-----------------+                
+   | config_tool.py  |------------------------+                     +---------> |   C compiler    |
+   +-----------------+                        |                     |           +-----------------+
+            |                                 |                     |                    |
+            V                                 V                     |                    V
+  +---------------------+          +---------------------+          |          +----------------------+
+  |      .conf file     |          | config .c, .h Files |----------+          |   User app exec file |
+  +---------------------+          +---------------------+                     +----------------------+
+  
+  
+```
+
+User app runtime configuration:
+```
+   +--------------------+
+   |    .conf file      |
+   +--------------------+
             |
             V
-    +---------------+
-    | config_tool.py|   
-    +---------------+
-            |
-            V
-  +----------+-----------+
-  | .conf, .c, .h Files |
-  +---------------------+
-```
+   +--------------------+
+   | User app exec file |   
+   +--------------------+
+ ```
 
 The `config_tool.py` script automates the generation of C code for configurations.
 It operates by taking a `.cfg` file as input and generates corresponding `.c`, `.h`, and `.conf` files.
@@ -62,9 +77,51 @@ $ make
 $ ./simple_config
 ```
 
+The `simple_config.cfg` file contains a simple data structure definition without nesting. 
+It defines two global variables, `abc` and `xyz`, intended for export to the user application. 
+Below is the structure of this file:
+
+```
+// Simple data struct without nesting <-- This is the comment line
+
+struct ABC abc; //Global variable export to the user application
+
+struct XYZ xyz; //Global variable export to the user application
+
+struct ABC { //Struct definition
+	int a;
+	float b;
+	int c;
+};
+
+struct XYZ {
+	float x;
+	double y;
+	int z;
+};
+```
+
+The `config_tool.py` generates `simple_config.conf` as a runtime template. 
+Initially, all parameters are commented out. 
+Users are required to add values and enable these parameters manually. 
+Here is the default template:
+```
+#CONF_abc = {
+#	abc.a = <value>;
+#	abc.b = <value>;
+#	abc.c = <value>;
+#};
+
+#CONF_xyz = {
+#	xyz.x = <value>;
+#	xyz.y = <value>;
+#	xyz.z = <value>;
+#};
+```
+
 ### Array Configuration
 
-Illustrates nested and array data structures.
+Demonstrates nested and array data structures.
 The program reads the configuration file, modifies values,
 and writes to a new configuration file.
 
@@ -74,9 +131,81 @@ $ make
 $ ./array_config
 ```
 
+The `array_config.cfg` file contains the nested data structure and array. 
+It defines a global variables `abc`, intended for export to the user application. 
+Below is the structure of this file:
+```
+//Nested and array data structure <-- This is the comment line
+
+#define MAX_MNP 2
+#define MAX_XYZ 2
+
+struct ABC abc; //Global variable export to the user application
+
+struct MNP { //Struct definition
+	//This field is required when the struct is used in case of array
+	//The reason is we don't always need all the elements in the array is enabled
+	int isInUsed; 
+	int m;
+	int n;
+	int p;
+};
+
+struct XYZ { //Struct definition
+	int isInUsed; //This field is required when the struct is used in case of array
+	float x;
+	double y;
+	int z;
+	struct MNP mnp[MAX_MNP];
+};
+
+struct ABC { //Struct definition
+	int a;
+	float b;
+	int c;
+	struct XYZ xyz[MAX_XYZ];
+};
+```
+
+The `config_tool.py` generates `array_config.conf` as a runtime template. 
+Initially, all parameters are commented out. 
+Users are required to add values and enable these parameters manually. 
+Here is the default template:
+```
+#CONF_abc = {
+#	abc.a = <value>;
+#	abc.b = <value>;
+#	abc.c = <value>;
+#	abc.xyz[0].isInUsed = <value>;
+#	abc.xyz[0].x = <value>;
+#	abc.xyz[0].y = <value>;
+#	abc.xyz[0].z = <value>;
+#	abc.xyz[0].mnp[0].isInUsed = <value>;
+#	abc.xyz[0].mnp[0].m = <value>;
+#	abc.xyz[0].mnp[0].n = <value>;
+#	abc.xyz[0].mnp[0].p = <value>;
+#	abc.xyz[0].mnp[1].isInUsed = <value>;
+#	abc.xyz[0].mnp[1].m = <value>;
+#	abc.xyz[0].mnp[1].n = <value>;
+#	abc.xyz[0].mnp[1].p = <value>;
+#	abc.xyz[1].isInUsed = <value>;
+#	abc.xyz[1].x = <value>;
+#	abc.xyz[1].y = <value>;
+#	abc.xyz[1].z = <value>;
+#	abc.xyz[1].mnp[0].isInUsed = <value>;
+#	abc.xyz[1].mnp[0].m = <value>;
+#	abc.xyz[1].mnp[0].n = <value>;
+#	abc.xyz[1].mnp[0].p = <value>;
+#	abc.xyz[1].mnp[1].isInUsed = <value>;
+#	abc.xyz[1].mnp[1].m = <value>;
+#	abc.xyz[1].mnp[1].n = <value>;
+#	abc.xyz[1].mnp[1].p = <value>;
+#};
+```
+
 ### Complex Configuration
 
-Showcases nested structures with multiple levels.
+Demonstrates nested structures with multiple levels.
 The program reads the configuration file, modifies values,
 and writes to a new configuration file.
 
@@ -84,6 +213,58 @@ and writes to a new configuration file.
 $ cd complex
 $ make
 $ ./complex_config
+```
+
+The `complex_config.cfg` file contains the nested data structure with multiple levels.
+It defines a global variables `abc`, intended for export to the user application. 
+Below is the structure of this file:
+```
+
+//Nested data structure
+
+struct ABC abc; //Global variable export to the user application
+
+struct MNP { //Struct definition
+	int m;
+	int n;
+	int p;
+};
+
+struct XYZ { //Struct definition
+	float x;
+	double y;
+	int z;
+	struct MNP mnp; //Level 2 nested
+};
+
+struct ABC { //Struct definition
+	int a;
+	float b;
+	int c;
+	struct XYZ xyz; //Level 1 nested
+	struct MNP abc_mnp;
+};
+```
+
+The `config_tool.py` generates `complex_config.conf` as a runtime template. 
+Initially, all parameters are commented out. 
+Users are required to add values and enable these parameters manually. 
+Here is the default template:
+```
+#CONF_abc = {
+#	abc.a = <value>;
+#	abc.b = <value>;
+#	abc.c = <value>;
+#	abc.xyz.x = <value>;
+#	abc.xyz.y = <value>;
+#	abc.xyz.z = <value>;
+#	abc.xyz.mnp.m = <value>;
+#	abc.xyz.mnp.n = <value>;
+#	abc.xyz.mnp.p = <value>;
+#	abc.abc_mnp.m = <value>;
+#	abc.abc_mnp.n = <value>;
+#	abc.abc_mnp.p = <value>;
+#};
 ```
 
 ## License
