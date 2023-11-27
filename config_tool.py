@@ -281,7 +281,7 @@ class ConfigParser():
                 else:
                     globalvar += "%s;" % vardef[2]
 
-            outf.write("%s\n\n" %globalvar)
+            outf.write("%s\n" %globalvar)
 
     def generate_global_variable(self, outf):
         self.generate_global_variable_option(outf, False)
@@ -464,7 +464,7 @@ class ConfigParser():
             outf.write("}\n")
 
         # export function
-        outf.write("\nint %s_write(const char* file_name)\n" %self.header_fname)
+        outf.write("\nint %s_write(const char* file_name)" %self.header_fname)
 
         ctext = '''
 {
@@ -482,7 +482,6 @@ class ConfigParser():
 
     def generate_static_source(self, outf):
         ctext = '''
-//Optimize the size for your usecase
 #define REGION_NBUFF_MAX 128
 #define READ_BUFF_SIZE 512
 #define NUM_REGIONS_MAX 16
@@ -493,7 +492,6 @@ struct config_region {
 	char *buffs[REGION_NBUFF_MAX];
 	int nbuffs;
 };
-
 '''
         outf.write(ctext)
 
