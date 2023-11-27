@@ -276,6 +276,8 @@ Feel free to tailor the sections, add licensing information, or expand on any ot
 
 - Generate unit tests for each `.cfg` input file to ensure comprehensive
 test coverage and validation of functionalities.
+- Currently only the `int`, `float`, and `double` types are supported.
+We will work to support the array char type to support string config.
 
 ## Contributions
 Contributions are welcome!
