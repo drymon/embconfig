@@ -24,9 +24,9 @@ Integration into the user app:
    +-----------------+                                                        +------------------------+
    |   .cfg file     |                                                        | User app .c, .h files  |
    +-----------------+                                                        +------------------------+
-            |                                                                           |                                                                                
-            V                                                                           V                                                                                                                                                           
-   +-----------------+                                                          +-----------------+                
+            |                                                                           |
+            V                                                                           V
+   +-----------------+                                                          +-----------------+
    | config_tool.py  |------------------------+                     +---------> |   C compiler    |
    +-----------------+                        |                     |           +-----------------+
             |                                 |                     |                    |
@@ -34,8 +34,8 @@ Integration into the user app:
   +---------------------+          +---------------------+          |          +----------------------+
   |      .conf file     |          | config .c, .h Files |----------+          |   User app exec file |
   +---------------------+          +---------------------+                     +----------------------+
-  
-  
+
+
 ```
 
 User app runtime configuration:
@@ -46,7 +46,7 @@ User app runtime configuration:
             |
             V
    +--------------------+
-   | User app program   |   
+   | User app program   |
    +--------------------+
  ```
 
@@ -77,8 +77,8 @@ $ make
 $ ./simple_config
 ```
 
-The `simple_config.cfg` file contains a simple data structure definition without nesting. 
-It defines two global variables, `abc` and `xyz`, intended for export to the user application. 
+The `simple_config.cfg` file contains a simple data structure definition without nesting.
+It defines two global variables, `abc` and `xyz`, intended for export to the user application.
 Below is the structure of this file:
 
 ```
@@ -101,9 +101,9 @@ struct XYZ {
 };
 ```
 
-The `config_tool.py` generates `simple_config.conf` as a runtime template. 
-Initially, all parameters are commented out. 
-Users are required to add values and enable these parameters manually. 
+The `config_tool.py` generates `simple_config.conf` as a runtime template.
+Initially, all parameters are commented out.
+Users are required to add values and enable these parameters manually.
 Here is the default template:
 ```
 #CONF_abc = {
@@ -131,8 +131,8 @@ $ make
 $ ./array_config
 ```
 
-The `array_config.cfg` file contains the nested data structure and array. 
-It defines a global variables `abc`, intended for export to the user application. 
+The `array_config.cfg` file contains the nested data structure and array.
+It defines a global variables `abc`, intended for export to the user application.
 Below is the structure of this file:
 ```
 //Nested and array data structure <-- This is the comment line
@@ -143,16 +143,12 @@ Below is the structure of this file:
 struct ABC abc; //Global variable export to the user application
 
 struct MNP { //Struct definition
-	//This field is required when the struct is used in case of array
-	//The reason is we don't always need all the elements in the array is enabled
-	int isInUsed; 
 	int m;
 	int n;
 	int p;
 };
 
 struct XYZ { //Struct definition
-	int isInUsed; //This field is required when the struct is used in case of array
 	float x;
 	double y;
 	int z;
@@ -167,36 +163,30 @@ struct ABC { //Struct definition
 };
 ```
 
-The `config_tool.py` generates `array_config.conf` as a runtime template. 
-Initially, all parameters are commented out. 
-Users are required to add values and enable these parameters manually. 
+The `config_tool.py` generates `array_config.conf` as a runtime template.
+Initially, all parameters are commented out.
+Users are required to add values and enable these parameters manually.
 Here is the default template:
 ```
 #CONF_abc = {
 #	abc.a = <value>;
 #	abc.b = <value>;
 #	abc.c = <value>;
-#	abc.xyz[0].isInUsed = <value>;
 #	abc.xyz[0].x = <value>;
 #	abc.xyz[0].y = <value>;
 #	abc.xyz[0].z = <value>;
-#	abc.xyz[0].mnp[0].isInUsed = <value>;
 #	abc.xyz[0].mnp[0].m = <value>;
 #	abc.xyz[0].mnp[0].n = <value>;
 #	abc.xyz[0].mnp[0].p = <value>;
-#	abc.xyz[0].mnp[1].isInUsed = <value>;
 #	abc.xyz[0].mnp[1].m = <value>;
 #	abc.xyz[0].mnp[1].n = <value>;
 #	abc.xyz[0].mnp[1].p = <value>;
-#	abc.xyz[1].isInUsed = <value>;
 #	abc.xyz[1].x = <value>;
 #	abc.xyz[1].y = <value>;
 #	abc.xyz[1].z = <value>;
-#	abc.xyz[1].mnp[0].isInUsed = <value>;
 #	abc.xyz[1].mnp[0].m = <value>;
 #	abc.xyz[1].mnp[0].n = <value>;
 #	abc.xyz[1].mnp[0].p = <value>;
-#	abc.xyz[1].mnp[1].isInUsed = <value>;
 #	abc.xyz[1].mnp[1].m = <value>;
 #	abc.xyz[1].mnp[1].n = <value>;
 #	abc.xyz[1].mnp[1].p = <value>;
@@ -216,7 +206,7 @@ $ ./complex_config
 ```
 
 The `complex_config.cfg` file contains the nested data structure with multiple levels.
-It defines a global variables `abc`, intended for export to the user application. 
+It defines a global variables `abc`, intended for export to the user application.
 Below is the structure of this file:
 ```
 
@@ -246,9 +236,9 @@ struct ABC { //Struct definition
 };
 ```
 
-The `config_tool.py` generates `complex_config.conf` as a runtime template. 
-Initially, all parameters are commented out. 
-Users are required to add values and enable these parameters manually. 
+The `config_tool.py` generates `complex_config.conf` as a runtime template.
+Initially, all parameters are commented out.
+Users are required to add values and enable these parameters manually.
 Here is the default template:
 ```
 #CONF_abc = {

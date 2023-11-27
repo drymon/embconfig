@@ -436,8 +436,6 @@ class ConfigParser():
                 else:
                     new_father = "%s.%s[%d]" %(father_name, name, i)
 
-                outf.write("\tif (%s.isInUsed != 0) {\n" %new_father)
-
                 if datatype == 'struct':
                     for member in member_array:
                         if member[0] == 'struct':
@@ -447,7 +445,6 @@ class ConfigParser():
                             var_access = "%s.%s" % (new_father, member[2])
                             outf.write("\tfprintf(file, \"\\t%s = %s, %s;\\n\");\n"
                                 %(var_access, self.get_ctype_print_format(member[0]), var_access))
-                outf.write("\t}\n")
 
     def generate_write_function(self, outf):
         for vardef in self.vardef_array:

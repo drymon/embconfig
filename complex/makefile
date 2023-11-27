@@ -3,4 +3,4 @@ all: gen
 gen:
 	../config_tool.py -i complex_config.cfg -g complex_config.conf
 clean:
-	rm complex_config complex_config.c complex_config.h complex_config.conf
+	rm -rf complex_config complex_config.c complex_config.h complex_config.conf
