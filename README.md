@@ -46,7 +46,7 @@ User app runtime configuration:
             |
             V
    +--------------------+
-   | User app exec file |   
+   | User app program   |   
    +--------------------+
  ```
 
