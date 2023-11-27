@@ -5,8 +5,9 @@
 This C library simplifies configuration management for embedded Linux systems, ideal for resource-constrained environments.
 It enables easy creation, reading, and writing of configuration settings, eliminating the need for complex structures like XML.
 Its straightforward approach facilitates portability across various platforms with minimal modifications.
+Made for Linux Embedded, but easy to use on other systems too. The code is short and straightforward, so it's simple to adapt for different operating systems
 
-Notably, this library offers nested and array configurations without requiring complex memory allocation,
+Notably, this library offers nested and array configurations without requiring complex memory allocation and data structure,
 ensuring simplicity in usage. Under the permissive BSD-2-Clause license, users can freely utilize and distribute the library without licensing complexities.
 
 ## Features
@@ -17,6 +18,22 @@ ensuring simplicity in usage. Under the permissive BSD-2-Clause license, users c
 - **Easy Integration:** Designed for seamless integration into embedded Linux projects with minimal overhead.
 
 ## Usage
+
+```
+   +-----------------+
+   |   .cfg File     |
+   +-----------------+
+            |
+            V
+    +---------------+
+    | config_tool.py|   
+    +---------------+
+            |
+            V
+  +----------+-----------+
+  | .conf, .c, .h Files |
+  +---------------------+
+```
 
 The `config_tool.py` script automates the generation of C code for configurations.
 It operates by taking a `.cfg` file as input and generates corresponding `.c`, `.h`, and `.conf` files.
