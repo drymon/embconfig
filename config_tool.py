@@ -487,67 +487,75 @@ class ConfigParser():
 #define NUM_REGIONS_MAX 16
 #define REGION_NAME_SIZE 32
 
+typedef enum {
+	PRIMITIVE_TYPE_INT,
+	PRIMITIVE_TYPE_FLOAT,
+	PRIMITIVE_TYPE_DOUBLE
+} primitive_type_t;
+
 struct config_region {
 	char name[REGION_NAME_SIZE];
 	char *buffs[REGION_NBUFF_MAX];
 	int nbuffs;
 };
-'''
-        outf.write(ctext)
 
-        ctext_start = '''
+static int read_primitive_type(void *var, primitive_type_t type,
+		const char *tag, char **buffs, int nbuffs)
+{
 	int i;
 
 	for (i = 0; i < nbuffs; i++) {
-		if (buffs[i] == NULL) {
-			continue;
+		if ((buffs[i] == NULL) || (strstr(buffs[i], tag) == NULL)) {continue;}
+		char *endtag;
+		char *value = strstr(buffs[i], "=");
+		if (value == NULL) {
+			printf("%s:Missing value: %s\\n", __func__, buffs[i]);
+			return -1;
 		}
-		if (strstr(buffs[i], tag) != NULL) {
-			char *endtag;
-			char *value = strstr(buffs[i], "=");
-			if (value == NULL) {
-				printf("%s:Missing value: %s\\n", __func__, buffs[i]);
-				return -1;
-			}
-			value += 1; //skip '='
-			endtag = strstr(value, ";");
-			if (endtag == NULL) {
-				printf("%s:Missing ';': %s\\n", __func__, buffs[i]);
-				return -1;
-			}
-			*endtag = 0;
-'''
-
-        ctext_end = '''
-			return 0;
+		value += 1; //skip '='
+		endtag = strstr(value, ";");
+		if (endtag == NULL) {
+			printf("%s:Missing ';': %s\\n", __func__, buffs[i]);
+			return -1;
 		}
+		*endtag = 0;
+		if (type == PRIMITIVE_TYPE_INT) {
+			*(int *)var = atoi(value);
+		} else if (type == PRIMITIVE_TYPE_FLOAT) {
+			*(float *)var = atof(value);
+		} else if (type == PRIMITIVE_TYPE_DOUBLE) {
+			*(double *)var = atof(value);
+		} else {
+			printf("%s:not support type=%d\\n", __func__, type);
+			return -1;
+		}
+		return 0;
 	}
 
 	return -1;
 }
 '''
+        outf.write(ctext)
         data_types = []
         for basic_type in self.basic_types_array:
             if basic_type == 'int':
-                data_types.append(('int', 'atoi'))
+                data_types.append(('int', 'PRIMITIVE_TYPE_INT'))
             elif basic_type == 'float':
-                data_types.append(('float', 'atof'))
+                data_types.append(('float', 'PRIMITIVE_TYPE_FLOAT'))
             elif basic_type == 'double':
-                data_types.append(('double', 'atof'))
+                data_types.append(('double', 'PRIMITIVE_TYPE_DOUBLE'))
 
         for data_type in data_types:
             outf.write("\nstatic int read_%s(%s *var, const char *tag, "
-                       "char **buffs, int nbuffs) \n{"
+                       "char **buffs, int nbuffs) \n{\n"
                        %(data_type[0], data_type[0]))
-            outf.write(ctext_start)
-            outf.write("\t\t\t*var = (%s)%s(value);\n" %(data_type[0], data_type[1]))
-            outf.write(ctext_end)
+            outf.write("\treturn read_primitive_type((void*)var, %s, tag, buffs, nbuffs);\n}\n"
+                       %(data_type[1]))
 
         ctext = '''
 static void remove_space(char *str)
 {
-	int i;
-	int j = 0;
+	int i = 0, j = 0;
 
 	for (i = 0; str[i] != 0; i++) {
 		if ((str[i] != ' ') && (str[i] != '\\t') && (str[i] != '\\n')) {
@@ -564,10 +572,9 @@ static int conf_readline(FILE *inf, char *line, int size)
 {
 	char a;
 	int res;
-	int rp=0;
+	int rp = 0;
 
-	if (feof(inf))
-		return 0;
+	if (feof(inf)) {return 0;}
 
 	while ((res = fread(&a, 1, 1, inf))) {
 		if (res < 0) {
@@ -579,9 +586,7 @@ static int conf_readline(FILE *inf, char *line, int size)
 			}
 		}
 
-		if (a == '\\n') {
-			break;
-		}
+		if (a == '\\n') {break;}
 
 		line[rp++] = a;
 		if (rp >= size-1) {
@@ -684,8 +689,7 @@ static int parse_regions(FILE *file, struct config_region *regions, int max_regi
 
 static void release_regions(struct config_region *regions, int nregions)
 {
-	int i;
-	int j;
+	int i, j;
 
 	for (i = 0; i < nregions; i++) {
 		for (j = 0; j < regions[i].nbuffs; j++) {
