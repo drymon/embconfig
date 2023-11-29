@@ -723,7 +723,7 @@ def print_usage():
     pname=sys.argv[0][sys.argv[0].rfind('/')+1:]
     print("%s [options]" % pname)
     print("    -h|--help: this help")
-    print("    -i|--input: input .cfg file name")
+    print("    -i|--input: input .schema file name")
     print("    -c|--cfile: output .c source file")
     print("    -f|--hfile: output .h header file")
     print("    -g|--conf: output .conf file")
@@ -731,7 +731,7 @@ def print_usage():
 def set_options():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hi:c:f:g:",
-                                   ["help", "input=", "cfile", "hfile"])
+                                   ["help", "input=", "cfile=", "hfile=", "conf="])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(str(err))  # will print something like "option -a not recognized"
@@ -744,7 +744,7 @@ def set_options():
         print_usage()
         sys.exit(1)
 
-    res = {'input':'example.cfg', 'hfile':None, 'cfile':None, 'conf':None}
+    res = {'input':'example.schema', 'hfile':None, 'cfile':None, 'conf':None}
 
     for o, a in opts:
         if o in ("-h", "--help"):
@@ -761,16 +761,18 @@ def set_options():
         else:
             assert False, "unhandled option"
 
-    input_recomp = re.compile(r"(\S+).cfg")
+    input_recomp = re.compile(r"(\S+).schema")
     r_input = input_recomp.match(res['input'])
     if r_input == None:
-        print("Input should be a .cfg file")
+        print("Input should be a .schema file")
         sys.exit(1)
 
     if res['hfile'] == None:
         res['hfile'] = r_input.group(1) + ".h"
     if res['cfile'] == None:
         res['cfile'] = r_input.group(1) + ".c"
+    if res['conf'] == None:
+        res['conf'] = r_input.group(1) + ".conf"
 
     return res
 
@@ -827,9 +829,8 @@ if __name__ == "__main__":
     parser.generate_source_file(cfile_out)
     cfile_out.close()
 
-    if options['conf'] != None:
-        conf_out = open(options['conf'], "w")
-        parser.generate_config_file(conf_out)
-        conf_out.close()
+    conf_out = open(options['conf'], "w")
+    parser.generate_config_file(conf_out)
+    conf_out.close()
 
     sys.exit(0)

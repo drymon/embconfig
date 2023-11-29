@@ -22,7 +22,7 @@ ensuring simplicity in usage. Under the permissive BSD-2-Clause license, users c
 Integration into the user app:
 ```
    +-----------------+                                                        +------------------------+
-   |   .cfg file     |                                                        | User app .c, .h files  |
+   |   .schema file  |                                                        | User app .c, .h files  |
    +-----------------+                                                        +------------------------+
             |                                                                           |
             V                                                                           V
@@ -51,13 +51,13 @@ User app runtime configuration:
  ```
 
 The `config_tool.py` script automates the generation of C code for configurations.
-It operates by taking a `.cfg` file as input and generates corresponding `.c`, `.h`, and `.conf` files.
+It operates by taking a `.schema` file as input and generates corresponding `.c`, `.h`, and `.conf` files.
 
 - `.conf`: Serves as the runtime configuration file.
 - `.c` and `.h`: These files can be seamlessly integrated into your project.
 
-You need to create the input `.cfg` file, the syntax is similar to the C code.
-Please check the `.cfg` example files in the `simple`, `array` and `complex` folder
+You need to create the input `.schema` file, the syntax is similar to the C code.
+Please check the `.schema` example files in the `simple`, `array` and `complex` folder
 for the reference.
 
 For comprehensive usage instructions and command-line options,
@@ -77,7 +77,7 @@ $ make
 $ ./simple_config
 ```
 
-The `simple_config.cfg` file contains a simple data structure definition without nesting.
+The `simple_config.schema` file contains a simple data structure definition without nesting.
 It defines two global variables, `abc` and `xyz`, intended for export to the user application.
 Below is the structure of this file:
 
@@ -131,7 +131,7 @@ $ make
 $ ./array_config
 ```
 
-The `array_config.cfg` file contains the nested data structure and array.
+The `array_config.schema` file contains the nested data structure and array.
 It defines a global variables `abc`, intended for export to the user application.
 Below is the structure of this file:
 ```
@@ -205,7 +205,7 @@ $ make
 $ ./complex_config
 ```
 
-The `complex_config.cfg` file contains the nested data structure with multiple levels.
+The `complex_config.schema` file contains the nested data structure with multiple levels.
 It defines a global variables `abc`, intended for export to the user application.
 Below is the structure of this file:
 ```
@@ -260,11 +260,9 @@ Here is the default template:
 ## License
 This library is licensed under the BSD-2-Clause license. See the LICENSE file for details.
 
-Feel free to tailor the sections, add licensing information, or expand on any other details specific to your library!
-
 ## TODO
 
-- Generate unit tests for each `.cfg` input file to ensure comprehensive
+- Generate unit tests for each `.schema` input file to ensure comprehensive
 test coverage and validation of functionalities.
 - Currently only the `int`, `float`, and `double` types are supported.
 We will work to support the array char type to support string config.
